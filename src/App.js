@@ -1,24 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import {useState} from 'react'
+import Header from './components/Header';
+import FeedBackData from './data/FeedBackData';
+import FeedBackList from './components/FeedBackList';
+import FeedBackStats from './components/FeedBackStats';
+import FeedBackInput from './components/FeedBackInput';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import AboutPage from './pages/AboutPage';
 
-function App() {
+let App = () => {
+  const [feedBacks, setFeedBack] = useState(FeedBackData)
+  const deleteHandler = (itemId) => {
+    if(window.confirm('Are you surfe you want to delete it?')) {
+      setFeedBack(feedBacks.filter(item => item.id !== itemId))
+    }
+  }
+
+  const addHandler = (newFeedBack) => {
+    setFeedBack([newFeedBack, ...feedBacks])
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <>
+        <Header />
+        <Router>
+          <Routes>
+            <Route
+              exact
+              path='/'
+              element={
+                <div className='container'>
+                <FeedBackInput feedBackAddHandler={(newFeedBack) => addHandler(newFeedBack)}/>
+                <FeedBackStats feedBacks={feedBacks} />
+                <FeedBackList feedbacks={feedBacks} deleteHandler={(itemId) => deleteHandler(itemId)} />
+              </div>
+              }>
+            </Route>
+
+            <Route
+              path='/about'
+              element={
+                <AboutPage />
+              }>
+              About Page
+            </Route>
+          </Routes>  
+        </Router>
+      </>
   );
 }
 
