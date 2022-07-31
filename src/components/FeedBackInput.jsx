@@ -1,42 +1,57 @@
 import {v4 as uuidv4} from 'uuid'
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import RatingSelect from './RatingSelect';
 import Card from './shared/Card'
+import FeedBackContext from '../context/FeedBackContext';
 
-function FeedBackInput({ feedBackAddHandler }) {
+function FeedBackInput() {
+  const { addHandler, editFeedBack, updateHandler } = useContext(FeedBackContext);
+
   const [text, setText] = useState('');
-  const [isDisabled, setIsDisabled] = useState(true);
-
+  const [isBtnDisabled, setIsBtnDisabled] = useState(true);
   const [message, setMessage] = useState('');
   const [selectedRating, setSelectedRating] = useState(10);
 
-  const handleTextChange = (e) => {
-    if(text === '') {//last text is checked
-      setIsDisabled(true);
+  useEffect(() => {
+    if(editFeedBack.edit === true) {
+      setIsBtnDisabled(false);
+      setText(editFeedBack.item.text);
+      setSelectedRating(editFeedBack.item.rating);
+    }
+  }, [editFeedBack])
+
+  const handleTextChange = ({ target: { value } }) => {//e.target.value using spread operator
+    if(value === '') {//last text is checked
+      setIsBtnDisabled(true);
       setMessage('');
-    } else if(text !== '' && text.trim().length < 10) {
-      setIsDisabled(true);
+    } else if(value !== '' && value.trim().length < 10) {
+      setIsBtnDisabled(true);
       setMessage('Message must have 10 characters');
     } else {
-      setIsDisabled(false);
+      setIsBtnDisabled(false);
       setMessage('');
     }
 
-    setText(e.target.value);//
+    setText(value);//
   };
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
     const newFeedBack = {
-      id: uuidv4(),
       text,
       rating: selectedRating
     }
 
-    feedBackAddHandler(newFeedBack);
+    if(editFeedBack.edit === true) {
+      newFeedBack.id = editFeedBack.item.id;
+      updateHandler(newFeedBack);
+    } else {
+      newFeedBack.id = uuidv4();
+      addHandler(newFeedBack);
+    }
 
     setText('')
-    setIsDisabled(true)
+    setIsBtnDisabled(true)
   }
 
   return (
@@ -51,7 +66,7 @@ function FeedBackInput({ feedBackAddHandler }) {
             placeholder='Write a Reviews'
             value={text}
             />
-          <button className='btn btn-secondary' type='submit' disabled={isDisabled}>Send</button>
+          <button className='btn btn-secondary' type='submit' disabled={isBtnDisabled}>Send</button>
         </div>
 
         {message && <div className="message">{message}</div>}

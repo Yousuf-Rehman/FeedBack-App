@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import {motion, AnimatePresence} from 'framer-motion'
 import FeedBackItem from './FeedBackItem'
+import FeedBackContext from '../context/FeedBackContext'
 
-function FeedBackList({feedbacks, deleteHandler}) {
 
-  if(!feedbacks || feedbacks.length === 0) {
+function FeedBackList() {
+  const {feedBacks} = useContext(FeedBackContext)
+
+  if(!feedBacks || feedBacks.length === 0) {
       return (
         <p>
           No FeedBack yet
@@ -16,14 +19,14 @@ function FeedBackList({feedbacks, deleteHandler}) {
     <div className='feedback-list'>
       <AnimatePresence>
         {
-          feedbacks.map((item) => (
+          feedBacks.map((item) => (
             <motion.div 
               key= {item.id}
               initial= {{opacity : 0}}
               animate= {{opacity : 1}}
               exit = {{opacity : 0}}
               >
-                <FeedBackItem key={item.id} item={item} onClickDeleteHandler={(itemId) => deleteHandler(itemId)}/>
+                <FeedBackItem key={item.id} item={item}/>
             </motion.div>
           )) 
         }
