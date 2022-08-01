@@ -2,12 +2,13 @@ import { useContext, useState } from 'react'
 import {motion, AnimatePresence} from 'framer-motion'
 import FeedBackItem from './FeedBackItem'
 import FeedBackContext from '../context/FeedBackContext'
+import Spinner from './shared/Spinner'
 
 
 function FeedBackList() {
-  const {feedBacks} = useContext(FeedBackContext)
+  const {feedBacks, isLoading} = useContext(FeedBackContext)
 
-  if(!feedBacks || feedBacks.length === 0) {
+  if(!isLoading && (!feedBacks || feedBacks.length === 0)) {
       return (
         <p>
           No FeedBack yet
@@ -15,7 +16,9 @@ function FeedBackList() {
       )
   }
 
-  return (
+  return isLoading ? (
+    <Spinner />
+  ) : (
     <div className='feedback-list'>
       <AnimatePresence>
         {

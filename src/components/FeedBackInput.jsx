@@ -46,7 +46,6 @@ function FeedBackInput() {
       newFeedBack.id = editFeedBack.item.id;
       updateHandler(newFeedBack);
     } else {
-      newFeedBack.id = uuidv4();
       addHandler(newFeedBack);
     }
 

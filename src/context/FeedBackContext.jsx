@@ -1,23 +1,47 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import FeedbackData from "../data/FeedBackData";
 
 const FeedBackContext = createContext();
 
 export const FeedBackProvider = ({ children }) => {
-  const [feedBacks, setFeedBack] = useState(FeedbackData);
+  const [feedBacks, setFeedBack] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const [editFeedBack, setEditFeedBack] = useState({
       item:{},
       edit: false
   })
 
-  const deleteHandler = (itemId) => {
-    if(window.confirm('Are you surfe you want to delete it?')) {
+  useEffect(() => {
+    fetchFeedBacks();
+  }, []);//empty array [] so that it runs once, when the component renders
+
+  const fetchFeedBacks = async () => {
+    const response = await fetch(`/feedback?_sort=id&_order=desc`);
+    const data = await response.json()
+    setFeedBack(data);
+    setIsLoading(false);
+  }
+
+  const deleteHandler = async (itemId) => {
+    if(window.confirm('Are you sure you want to delete it?')) {
+      await fetch(`/feedback/${itemId}`, { method: 'DELETE' })
       setFeedBack(feedBacks.filter(item => item.id !== itemId))
     }
   }
 
-  const addHandler = (newFeedBack) => {
-    setFeedBack([newFeedBack, ...feedBacks])
+  const addHandler = async (newFeedBack) => {
+    const response = await fetch('/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newFeedBack)
+    });
+
+    const data = await response.json();
+
+    setFeedBack([data, ...feedBacks])
   }
 
   const editHandler = (item) => {
@@ -27,8 +51,18 @@ export const FeedBackProvider = ({ children }) => {
     })
   }
 
-  const updateHandler = (updatedItem) => {
-    setFeedBack(feedBacks.map((item) => item.id === updatedItem.id ? updatedItem : item))
+  const updateHandler = async (updatedItem) => {
+    const response = await fetch(`/feedback/${updatedItem.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updatedItem)
+    });
+
+    const data = await response.json();
+
+    setFeedBack(feedBacks.map((item) => item.id === updatedItem.id ? data : item))
 
     setEditFeedBack({
       item: {},
@@ -43,8 +77,9 @@ export const FeedBackProvider = ({ children }) => {
         deleteHandler,
         addHandler,
         editHandler,
-        editFeedBack,
         updateHandler,
+        editFeedBack,
+        isLoading,
       }}
     >
       {children}
