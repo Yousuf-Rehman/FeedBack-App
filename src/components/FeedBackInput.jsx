@@ -1,4 +1,3 @@
-import {v4 as uuidv4} from 'uuid'
 import React, { useContext, useEffect, useState } from 'react'
 import RatingSelect from './RatingSelect';
 import Card from './shared/Card'

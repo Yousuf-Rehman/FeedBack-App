@@ -1,5 +1,4 @@
 import React from 'react'
-import Card from './shared/Card'
 
 function RatingSelect({ selectRating, selected }) {
 

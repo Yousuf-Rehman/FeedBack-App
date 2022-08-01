@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState } from "react";
-import FeedbackData from "../data/FeedBackData";
 
 const FeedBackContext = createContext();
 
