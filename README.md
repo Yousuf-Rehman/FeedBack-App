@@ -5,13 +5,12 @@ This app basically Takes the feedback from the user and add/update/delete it fro
 ### Technology used:
  - ReactJS
 
-### Available Scripts
-In the project directory, you can run:
-
-### `npm run dev`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Script
+Install dependencies
+| npm install
+Run
+| npm run dev
+This will run JSON-server on port :5000 and React on port :3000
 
 
 ### Note:
